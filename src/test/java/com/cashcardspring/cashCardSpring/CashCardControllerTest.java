@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.net.URI;
+
 @Component
 @SpringBootTest(webEnvironment =
         SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -51,7 +53,18 @@ public class CashCardControllerTest {
     @Test
     public void shouldCreateANewCashCard(){
         CashCard newCashCard = new CashCard(null, 250.00);
-        ResponseEntity<Void> createResponse = restTemplate.postForEntity("cashcard/create", newCashCard, void.class);
-        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ResponseEntity<Void> createResponse =
+                restTemplate.postForEntity("/cashcard/create", newCashCard, void.class);
+
+        //This line provide a response with the 201
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+        //The following code contain location header field that provide the Id of the
+        //new object created
+        URI locationOfNewCashCard = createResponse.getHeaders().getLocation();
+        ResponseEntity<String> getResponse =
+                restTemplate.getForEntity(locationOfNewCashCard, String.class);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
     }
 }
