@@ -36,7 +36,7 @@ public class CashCardControllerTest {
         Number id = documentContext.read("$.id");
         assertThat(id).isEqualTo(12);
 
-        //Lets test the response contains the correct amount value
+        //Let's test the response contains the correct amount value
         Double amount = documentContext.read("$.amount");
         assertThat(amount).isEqualTo(23.2);
     }
@@ -59,12 +59,20 @@ public class CashCardControllerTest {
         //This line provide a response with the 201
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-        //The following code contain location header field that provide the Id of the
+        //The following code contain location header field that provide the id of the
         //new object created
         URI locationOfNewCashCard = createResponse.getHeaders().getLocation();
         ResponseEntity<String> getResponse =
                 restTemplate.getForEntity(locationOfNewCashCard, String.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        //
+        DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+        Number id = documentContext.read("$.id");
+        Double amount = documentContext.read("$.amount");
+
+        assertThat(id).isNotNull();
+        assertThat(amount).isEqualTo(250.00);
 
     }
 }
