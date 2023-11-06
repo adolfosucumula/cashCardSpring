@@ -8,19 +8,24 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/cashcard")
 public class CashCardController {
 
-    @Autowired
     private CashCardRepository cardRepository;
 
+    public CashCardController(CashCardRepository cardRepository) {
+        this.cardRepository = cardRepository;
+    }
     @GetMapping("/{requestId}")
     public ResponseEntity<CashCard> findById(@PathVariable Long requestId) {
-        if(requestId.equals(99L)){
-            CashCard cashCard = new CashCard(12L, 23.2);
-            return ResponseEntity.ok(cashCard);
+
+        Optional<CashCard> optionalCashCard = cardRepository.findById(requestId);
+
+        if(optionalCashCard.isPresent()){
+            return ResponseEntity.ok(optionalCashCard.get());
         }else{
             return ResponseEntity.notFound().build();
         }
