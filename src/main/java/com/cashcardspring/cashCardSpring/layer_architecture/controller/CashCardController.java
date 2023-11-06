@@ -2,12 +2,16 @@ package com.cashcardspring.cashCardSpring.layer_architecture.controller;
 
 import com.cashcardspring.cashCardSpring.layer_architecture.repositories.CashCardRepository;
 import com.cashcardspring.cashCardSpring.mappers.CashCard;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,6 +23,12 @@ public class CashCardController {
     public CashCardController(CashCardRepository cardRepository) {
         this.cardRepository = cardRepository;
     }
+    @GetMapping
+    public ResponseEntity <Iterable<CashCard>> findAllCashCard(Pageable pageable) {
+
+        return ResponseEntity.ok(cardRepository.findAll());
+    }
+
     @GetMapping("/{requestId}")
     public ResponseEntity<CashCard> findById(@PathVariable Long requestId) {
 

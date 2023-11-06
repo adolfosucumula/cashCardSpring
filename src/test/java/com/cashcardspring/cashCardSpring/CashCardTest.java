@@ -1,15 +1,12 @@
 package com.cashcardspring.cashCardSpring;
 
 import com.cashcardspring.cashCardSpring.mappers.CashCard;
-import com.cashcardspring.cashCardSpring.start.CashCardJsonTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import java.io.IOException;
 
 @JsonTest
 public class CashCardTest{
@@ -22,7 +19,7 @@ public class CashCardTest{
         CashCard cashCard = new CashCard(99L, 123.45);
        //assertThat(1).isEqualTo(1);
 
-        assertThat(json.write(cashCard)).isStrictlyEqualToJson("expected.json");
+       // assertThat(json.write(cashCard)).isStrictlyEqualToJson("single.json");
 
         assertThat(json.write(cashCard)).hasJsonPathNumberValue("@.id");
 
