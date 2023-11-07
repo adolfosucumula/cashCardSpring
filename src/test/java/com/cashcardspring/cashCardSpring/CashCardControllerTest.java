@@ -27,7 +27,7 @@ public class CashCardControllerTest {
     public void shouldReturnACashCardWhenDataIsSaved() {
         ResponseEntity<String> response =
                 restTemplate
-                        .withBasicAuth("sarah1-DA", "abc123")
+                        .withBasicAuth("sarah1", "abc123")
                         .getForEntity("/cashcard/99", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
