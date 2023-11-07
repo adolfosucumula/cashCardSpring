@@ -27,7 +27,7 @@ public class CashCardControllerTest {
     public void shouldReturnACashCardWhenDataIsSaved() {
         ResponseEntity<String> response =
                 restTemplate
-                        .withBasicAuth("sarah1", "abc123")
+                        .withBasicAuth("sarah1-DA", "abc123")
                         .getForEntity("/cashcard/99", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -52,6 +52,19 @@ public class CashCardControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isBlank();
 
+    }
+
+    @Test
+    public void shouldnotReturnACashCardWhenUsingBadCredentials() {
+        ResponseEntity<String> response = restTemplate
+                .withBasicAuth("BAD-USER", "abc123")
+                .getForEntity("/cashcard/99", String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+        response = restTemplate.withBasicAuth("sarah1", "BAD-PASSWORD")
+                .getForEntity("/cashcard/99", String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
     @Test
@@ -81,4 +94,6 @@ public class CashCardControllerTest {
         assertThat(amount).isEqualTo(250.00);
 
     }
+
+
 }
