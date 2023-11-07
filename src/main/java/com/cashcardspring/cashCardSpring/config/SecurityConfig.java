@@ -19,7 +19,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(request -> request
                     .requestMatchers("/cashcard/**")
-                    .authenticated())
+                        .hasRole("CARD-OWNER")) // enable RBAC: Replace the
+                    //.authenticated())
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
