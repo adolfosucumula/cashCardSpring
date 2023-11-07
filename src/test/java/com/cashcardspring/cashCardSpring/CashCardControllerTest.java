@@ -26,7 +26,9 @@ public class CashCardControllerTest {
     @Test
     public void shouldReturnACashCardWhenDataIsSaved() {
         ResponseEntity<String> response =
-                restTemplate.getForEntity("/cashcard/99", String.class);
+                restTemplate
+                        .withBasicAuth("sarah1", "abc123")
+                        .getForEntity("/cashcard/99", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -34,16 +36,18 @@ public class CashCardControllerTest {
         //In this specific cas the ID
         DocumentContext documentContext = JsonPath.parse(response.getBody());
         Number id = documentContext.read("$.id");
-        assertThat(id).isEqualTo(12);
+        assertThat(id).isEqualTo(99);
 
         //Let's test the response contains the correct amount value
         Double amount = documentContext.read("$.amount");
-        assertThat(amount).isEqualTo(23.2);
+        assertThat(amount).isEqualTo(123.45);
     }
 
     @Test
     public void shouldNotReturnACashCardWithAnUnknownId(){
-        ResponseEntity<String> response = restTemplate.getForEntity("/cashcard/91", String.class);
+        ResponseEntity<String> response = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .getForEntity("/cashcard/1", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isBlank();
@@ -52,9 +56,11 @@ public class CashCardControllerTest {
 
     @Test
     public void shouldCreateANewCashCard(){
-        CashCard newCashCard = new CashCard(null, 250.00);
+        CashCard newCashCard = new CashCard(null, 250.00, "sarah1");
         ResponseEntity<Void> createResponse =
-                restTemplate.postForEntity("/cashcard/create", newCashCard, void.class);
+                restTemplate
+                        .withBasicAuth("sarah1", "abc123")
+                        .postForEntity("/cashcard/create", newCashCard, void.class);
 
         //This line provide a response with the 201
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
