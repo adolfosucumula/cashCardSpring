@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,16 +25,30 @@ public class CashCardController {
         this.cardRepository = cardRepository;
     }
     @GetMapping
-    public ResponseEntity <Iterable<CashCard>> findAllCashCard(Pageable pageable) {
-
-        return ResponseEntity.ok(cardRepository.findAll());
+    public ResponseEntity <List<CashCard>> findAll(Pageable pageable, Principal principal) {
+        /*Page<CashCard> page = cardRepository.findAll(
+                PageRequest.of(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        pageable.getSortOr(Sort.by(Sort.Direction.ASC, "amount"))
+                ));*/
+        Page<CashCard> page = cardRepository.findByOwner(
+                principal.getName(),
+                PageRequest.of(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        pageable.getSortOr(Sort.by(Sort.Direction.ASC, "amount"))
+                )
+        );
+        return ResponseEntity.ok(page.getContent());
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<CashCard> findById(@PathVariable Long requestId) {
+    public ResponseEntity<CashCard> findById(@PathVariable Long requestId, Principal principal) {
 
-        Optional<CashCard> optionalCashCard = cardRepository.findById(requestId);
-
+        Optional<CashCard> optionalCashCard =
+                Optional.ofNullable(cardRepository.findByIdAndOwner(requestId, principal.getName()) );
+        System.out.println("ROLE: "+ principal.getName());
         if(optionalCashCard.isPresent()){
             return ResponseEntity.ok(optionalCashCard.get());
         }else{
