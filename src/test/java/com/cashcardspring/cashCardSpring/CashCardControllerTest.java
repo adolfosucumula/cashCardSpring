@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -107,7 +109,9 @@ public class CashCardControllerTest {
     @Test
     @DirtiesContext
     public void shouldCreateANewCashCard(){
+
         CashCard newCashCard = new CashCard(null, 250.00, "sarah1");
+
         ResponseEntity<Void> createResponse =
                 restTemplate
                         .withBasicAuth("sarah1", "abc123")
@@ -139,6 +143,18 @@ public class CashCardControllerTest {
                 .withBasicAuth("sarah1", "abc123")
                 .getForEntity("/cashcard/102", String.class); // kumar2's data
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DirtiesContext
+    public void shouldUpdateAnExistingCashCard(){
+        CashCard cashCardUpdate= new CashCard(null, 88.99, null);
+        HttpEntity<CashCard> request = new HttpEntity<>(cashCardUpdate);
+        ResponseEntity<Void> getResponse = restTemplate
+                .withBasicAuth("sarah1", "abc123")
+                .exchange("/cashcard/102", HttpMethod.PUT, request, Void.class);
+
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
 
